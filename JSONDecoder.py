@@ -57,7 +57,7 @@ class JSONDecoder:
       else:
         res += tabs
         res += self.decodPairToStr(key, value)
-    res += tabs
+    res += (tab - 1) * "  "
     res += "}\n"
     return res
 
