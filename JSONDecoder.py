@@ -1,5 +1,8 @@
 import simplejson as json
 
+# This JSON decoder decode JSON format file to
+# caffe configuration format file
+
 class JSONDecoder:
   def decodeFromFile(self, file_path, output_path):
     json_data=open("data/jsonsample.json").read()
@@ -58,10 +61,6 @@ class JSONDecoder:
     res += "}\n"
     return res
 
-#decoder = JSONDecoder()
-#decoder.decode('{"name":"mnist_siamese","input":"data","input_shape":{"dim":10000,"dim":1,"dim":28,"dim":28}}')
-#obj = json.loads('{"name":"mnist_siamese","input":"data","input_shape":{"dim":10000,"dim":1,"dim":28,"dim":28}}')
-#type(obj)
-
-decoder = JSONDecoder()
-decoder.decodeFromFile("data/jsonsample.json", "data/jsonsample.prototxt")
+if __name__ == "__main__":
+  decoder = JSONDecoder()
+  decoder.decodeFromFile("data/jsonsample.json", "data/jsonsample.prototxt")
