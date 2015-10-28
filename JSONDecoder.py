@@ -5,9 +5,11 @@ import simplejson as json
 
 class JSONDecoder:
   def decodeFromFile(self, file_path, output_path):
-    json_data=open("data/jsonsample.json").read()
+    json_data=open(file_path).read()
     caffe_data = self.decode(json_data)
-    open(output_path,'w').write(caffe_data)
+    f = open(output_path,'w+')
+    f.write(caffe_data)
+    f.close()
 
   def decode(self, j=''):
     if len(j) == 0:
