@@ -1,0 +1,59 @@
+{
+input:"data"
+layer:{
+  name:"conv1"
+  bottom:"data"
+  top:"conv1"
+  param:{
+    lr_mult:1
+  }
+  param:{
+    lr_mult:2
+  }
+  convolution_param:{
+    stride:1
+    kernel_size:5
+    num_output:20
+  }
+  type:"Convolution"
+}
+layer:{
+  pooling_param:{
+    stride:2
+    kernel_size:2
+    pool:MAX
+  }
+  top:"pool1"
+  type:"Pooling"
+  name:"pool1"
+  bottom:"conv1"
+}
+layer:{
+  name:"ip1"
+  bottom:"pool2"
+  inner_product_param:{
+    num_output:500
+  }
+  top:"ip1"
+  param:{
+    lr_mult:1
+  }
+  param:{
+    lr_mult:2
+  }
+  type:"InnerProduct"
+}
+layer:{
+  top:"ip1"
+  type:"ReLU"
+  name:"relu1"
+  bottom:"ip1"
+}
+name:"mnist_siamese"
+input_shape:{
+  dim:10000
+  dim:1
+  dim:28
+  dim:28
+}
+}
