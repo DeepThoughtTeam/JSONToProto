@@ -47,7 +47,7 @@ class JSONDecoder:
         res += key
         res += ":"
         res += self.decodeDictToStr(value, tab + 1);
-      elif isinstance(value, list): # assume list only contains dicts
+      elif isinstance(value, list):
         for element in value:
           res += tabs
           res += key
