@@ -15,14 +15,17 @@ class JSONDecoder:
     if len(j) == 0:
       return
     data = json.loads(j)
-    return self.decodeDictToStr(data, 0)
+    return self.decodeRootDictToStr(data, 0)
 
   def decodPairToStr(self, key, value):
     res = ""
     res += str(key)
-    res += ":"
-    if isinstance(value, str) and value != "MAX":
-      res += "\"" + value +"\""
+    res += ": "
+    if isinstance(value, str):
+      if value.isupper():
+        res += value
+      else:
+        res += "\"" + value +"\""
     else:
       res += str(value)
     res +="\n"
@@ -30,31 +33,60 @@ class JSONDecoder:
 
   def decodeValueToStr(self, value):
     res = ""
-    if isinstance(value, str) and value != "MAX":
-      res += "\"" + value +"\""
+    if isinstance(value, str):
+      if value.isupper():
+        res += value
+      else:
+        res += "\"" + value +"\""
     else:
       res += str(value)
     res +="\n"
+    return res
+
+  def decodeRootDictToStr(self, dictionary, tab):
+    tabs = "  " * tab
+    res = ""
+    for key,value in dictionary.iteritems():
+      if isinstance(value, dict):
+        res += tabs
+        res += key
+        res += " "
+        res += self.decodeDictToStr(value, tab + 1);
+      elif isinstance(value, list): # assume list only contains dicts
+        for element in value:
+          res += tabs
+          res += key
+          if isinstance(element, dict):
+            res += " "
+            res += self.decodeDictToStr(element, tab + 1)
+          else:
+            res += ": "
+            res += self.decodeValueToStr(element)
+      else:
+        res += tabs
+        res += self.decodPairToStr(key, value)
+    res += (tab - 1) * "  "
     return res
 
   def decodeDictToStr(self, dictionary, tab):
     tabs = "  " * tab
     res = "{\n"
     for key,value in dictionary.iteritems():
-
       if isinstance(value, dict):
         res += tabs
         res += key
-        res += ":"
+        res += " "
         res += self.decodeDictToStr(value, tab + 1);
       elif isinstance(value, list):
         for element in value:
           res += tabs
           res += key
-          res += ":"
+
           if isinstance(element, dict):
+            res += " "
             res += self.decodeDictToStr(element, tab + 1)
           else:
+            res += ": "
             res += self.decodeValueToStr(element)
       else:
         res += tabs
@@ -65,4 +97,4 @@ class JSONDecoder:
 
 if __name__ == "__main__":
   decoder = JSONDecoder()
-  decoder.decodeFromFile("data/jsonsample.json", "data/jsonsample.prototxt")
+  decoder.decodeFromFile("data/test.json", "data/jsonsample.prototxt")

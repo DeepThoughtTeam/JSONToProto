@@ -1,59 +1,222 @@
-{
-input:"data"
-layer:{
-  name:"conv1"
-  bottom:"data"
-  top:"conv1"
-  param:{
-    lr_mult:1
+layer {
+  name: "cifar"
+  top: "data"
+  top: "label"
+  data_param {
+    source: "examples/cifar10/cifar10_train_lmdb"
+    batch_size: 100
+    backend: LMDB
   }
-  param:{
-    lr_mult:2
+  include {
+    phase: TRAIN
   }
-  convolution_param:{
-    stride:1
-    kernel_size:5
-    num_output:20
+  type: "Data"
+  transform_param {
+    mean_file: "examples/cifar10/mean.binaryproto"
   }
-  type:"Convolution"
 }
-layer:{
-  pooling_param:{
-    stride:2
-    kernel_size:2
-    pool:MAX
+layer {
+  name: "cifar"
+  top: "data"
+  top: "label"
+  data_param {
+    source: "examples/cifar10/cifar10_test_lmdb"
+    batch_size: 100
+    backend: LMDB
   }
-  top:"pool1"
-  type:"Pooling"
-  name:"pool1"
-  bottom:"conv1"
-}
-layer:{
-  name:"ip1"
-  bottom:"pool2"
-  inner_product_param:{
-    num_output:500
+  include {
+    phase: TEST
   }
-  top:"ip1"
-  param:{
-    lr_mult:1
+  type: "Data"
+  transform_param {
+    mean_file: "examples/cifar10/mean.binaryproto"
   }
-  param:{
-    lr_mult:2
+}
+layer {
+  name: "conv1"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
   }
-  type:"InnerProduct"
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 32
+    weight_filler {
+      std: 0.0001
+      type: "gaussian"
+    }
+    stride: 1
+    pad: 2
+    bias_filler {
+      type: "constant"
+    }
+    kernel_size: 5
+  }
+  type: "Convolution"
 }
-layer:{
-  top:"ip1"
-  type:"ReLU"
-  name:"relu1"
-  bottom:"ip1"
+layer {
+  pooling_param {
+    stride: 2
+    kernel_size: 3
+    pool: MAX
+  }
+  top: "pool1"
+  type: "Pooling"
+  name: "pool1"
+  bottom: "conv1"
 }
-name:"mnist_siamese"
-input_shape:{
-  dim:10000
-  dim:1
-  dim:28
-  dim:28
+layer {
+  top: "pool1"
+  type: "ReLU"
+  name: "relu1"
+  bottom: "pool1"
 }
+layer {
+  name: "conv2"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 32
+    weight_filler {
+      std: 0.01
+      type: "gaussian"
+    }
+    stride: 1
+    pad: 2
+    bias_filler {
+      type: "constant"
+    }
+    kernel_size: 5
+  }
+  type: "Convolution"
 }
+layer {
+  top: "conv2"
+  type: "ReLU"
+  name: "relu2"
+  bottom: "conv2"
+}
+layer {
+  pooling_param {
+    stride: 2
+    kernel_size: 3
+    pool: AVE
+  }
+  top: "pool2"
+  type: "Pooling"
+  name: "pool2"
+  bottom: "conv2"
+}
+layer {
+  name: "conv3"
+  bottom: "pool2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 64
+    weight_filler {
+      std: 0.01
+      type: "gaussian"
+    }
+    stride: 1
+    pad: 2
+    bias_filler {
+      type: "constant"
+    }
+    kernel_size: 5
+  }
+  type: "Convolution"
+}
+layer {
+  top: "conv3"
+  type: "ReLU"
+  name: "relu3"
+  bottom: "conv3"
+}
+layer {
+  pooling_param {
+    stride: 2
+    kernel_size: 3
+    pool: AVE
+  }
+  top: "pool3"
+  type: "Pooling"
+  name: "pool3"
+  bottom: "conv3"
+}
+layer {
+  name: "ip1"
+  bottom: "pool3"
+  inner_product_param {
+    weight_filler {
+      std: 0.1
+      type: "gaussian"
+    }
+    bias_filler {
+      type: "constant"
+    }
+    num_output: 64
+  }
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: "InnerProduct"
+}
+layer {
+  name: "ip2"
+  bottom: "ip1"
+  inner_product_param {
+    weight_filler {
+      std: 0.1
+      type: "gaussian"
+    }
+    bias_filler {
+      type: "constant"
+    }
+    num_output: 10
+  }
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: "InnerProduct"
+}
+layer {
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+  type: "Accuracy"
+  name: "accuracy"
+  bottom: "ip2"
+  bottom: "label"
+}
+layer {
+  top: "loss"
+  type: "SoftmaxWithLoss"
+  name: "loss"
+  bottom: "ip2"
+  bottom: "label"
+}
+name: "CIFAR10_quick"
