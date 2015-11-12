@@ -1,8 +1,8 @@
-import simplejson as json
-
+#import simplejson as json
+import json
 # This JSON decoder decode JSON format file to
 # caffe configuration format file
-
+import sys
 class JSONDecoder:
   def decodeFromFile(self, file_path, output_path):
     json_data=open(file_path).read()
@@ -96,5 +96,8 @@ class JSONDecoder:
     return res
 
 if __name__ == "__main__":
+  jsonPath = sys.argv[1]
+  protoPath = sys.argv[2]
+
   decoder = JSONDecoder()
-  decoder.decodeFromFile("data/test.json", "data/jsonsample.prototxt")
+  decoder.decodeFromFile(jsonPath, protoPath)
