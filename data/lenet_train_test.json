@@ -1,0 +1,188 @@
+{
+  "name": "LeNet",
+  "layer": [
+    {
+      "name": "mnist",
+      "type": "Data",
+      "top": [
+        "data",
+        "label"
+      ],
+      "include": {
+        "phase": "TRAIN"
+      },
+      "transform_param": {
+        "scale": 0.00390625
+      },
+      "data_param": {
+        "source": "examples/mnist/mnist_train_lmdb",
+        "batch_size": 64,
+        "backend": "LMDB"
+      }
+    },
+    {
+      "name": "mnist",
+      "type": "Data",
+      "top": [
+        "data",
+        "label"
+      ],
+      "include": {
+        "phase": "TEST"
+      },
+      "transform_param": {
+        "scale": 0.00390625
+      },
+      "data_param": {
+        "source": "examples/mnist/mnist_test_lmdb",
+        "batch_size": 100,
+        "backend": "LMDB"
+      }
+    },
+    {
+      "name": "conv1",
+      "type": "Convolution",
+      "bottom": "data",
+      "top": "conv1",
+      "param": [
+        {
+          "lr_mult": 1
+        },
+        {
+          "lr_mult": 2
+        }
+      ],
+      "convolution_param": {
+        "num_output": 20,
+        "kernel_size": 5,
+        "stride": 1,
+        "weight_filler": {
+          "type": "xavier"
+        },
+        "bias_filler": {
+          "type": "constant"
+        }
+      }
+    },
+    {
+      "name": "pool1",
+      "type": "Pooling",
+      "bottom": "conv1",
+      "top": "pool1",
+      "pooling_param": {
+        "pool": "MAX",
+        "kernel_size": 2,
+        "stride": 2
+      }
+    },
+    {
+      "name": "conv2",
+      "type": "Convolution",
+      "bottom": "pool1",
+      "top": "conv2",
+      "param": [
+        {
+          "lr_mult": 1
+        },
+        {
+          "lr_mult": 2
+        }
+      ],
+      "convolution_param": {
+        "num_output": 50,
+        "kernel_size": 5,
+        "stride": 1,
+        "weight_filler": {
+          "type": "xavier"
+        },
+        "bias_filler": {
+          "type": "constant"
+        }
+      }
+    },
+    {
+      "name": "pool2",
+      "type": "Pooling",
+      "bottom": "conv2",
+      "top": "pool2",
+      "pooling_param": {
+        "pool": "MAX",
+        "kernel_size": 2,
+        "stride": 2
+      }
+    },
+    {
+      "name": "ip1",
+      "type": "InnerProduct",
+      "bottom": "pool2",
+      "top": "ip1",
+      "param": [
+        {
+          "lr_mult": 1
+        },
+        {
+          "lr_mult": 2
+        }
+      ],
+      "inner_product_param": {
+        "num_output": 500,
+        "weight_filler": {
+          "type": "xavier"
+        },
+        "bias_filler": {
+          "type": "constant"
+        }
+      }
+    },
+    {
+      "name": "relu1",
+      "type": "ReLU",
+      "bottom": "ip1",
+      "top": "ip1"
+    },
+    {
+      "name": "ip2",
+      "type": "InnerProduct",
+      "bottom": "ip1",
+      "top": "ip2",
+      "param": [
+        {
+          "lr_mult": 1
+        },
+        {
+          "lr_mult": 2
+        }
+      ],
+      "inner_product_param": {
+        "num_output": 10,
+        "weight_filler": {
+          "type": "xavier"
+        },
+        "bias_filler": {
+          "type": "constant"
+        }
+      }
+    },
+    {
+      "name": "accuracy",
+      "type": "Accuracy",
+      "bottom": [
+        "ip2",
+        "label"
+      ],
+      "top": "accuracy",
+      "include": {
+        "phase": "TEST"
+      }
+    },
+    {
+      "name": "loss",
+      "type": "SoftmaxWithLoss",
+      "bottom": [
+        "ip2",
+        "label"
+      ],
+      "top": "loss"
+    }
+  ]
+}

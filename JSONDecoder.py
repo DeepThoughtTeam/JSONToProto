@@ -97,4 +97,4 @@ class JSONDecoder:
 
 if __name__ == "__main__":
   decoder = JSONDecoder()
-  decoder.decodeFromFile("data/test.json", "data/jsonsample.prototxt")
+  decoder.decodeFromFile("data/lenet_train_test.json", "data/minist.prototxt")
