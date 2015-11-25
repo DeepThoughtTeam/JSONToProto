@@ -1,0 +1,98 @@
+{
+"name": "LeNet",
+"layer": [{
+  "name": "mnist",
+  "type": "Data",
+  "top": ["data", "label"],
+  "include": {
+    "phase": "TRAIN"
+  },
+  "transform_param": {
+    "scale": 0.00390625
+  },
+  "data_param": {
+    "source": "examples/mlp/mnist_train_lmdb",
+    "batch_size": 64,
+    "backend": "LMDB"
+  }
+},
+{
+  "name": "mnist",
+  "type": "Data",
+  "top": ["data","label"],
+  "include": {
+    "phase": "TEST"
+  },
+  "transform_param": {
+    "scale": 0.00390625
+  },
+  "data_param": {
+    "source": "examples/mlp/mnist_test_lmdb",
+    "batch_size": 100,
+    "backend": "LMDB"
+  }
+},
+{
+  "name": "ip1",
+  "type": "InnerProduct",
+  "bottom": "data",
+  "top": "ip1",
+  "param": [{
+    "lr_mult": 1
+  },
+  {
+    "lr_mult": 2
+  }],
+  "inner_product_param": {
+    "num_output": 500,
+    "weight_filler": {
+      "type": "xavier"
+    },
+    "bias_filler": {
+      "type": "constant"
+    }
+  }
+},
+{
+  "name": "relu1",
+  "type": "ReLU",
+  "bottom": "ip1",
+  "top": "ip1"
+},
+{
+  "name": "ip2",
+  "type": "InnerProduct",
+  "bottom": "ip1",
+  "top": "ip2",
+  "param": [{
+    "lr_mult": 1
+  },
+  {
+    "lr_mult": 2
+  }],
+  "inner_product_param": {
+    "num_output": 10,
+    "weight_filler": {
+      "type": "xavier"
+    },
+    "bias_filler":{
+      "type": "constant"
+    }
+  }
+},
+{
+  "name": "accuracy",
+  "type": "Accuracy",
+  "bottom": ["ip2", "label"],
+  "top": "accuracy",
+  "include": {
+    "phase": "TEST"
+  }
+},
+{
+  "name": "loss",
+  "type": "SoftmaxWithLoss",
+  "bottom": ["ip2", "label"],
+  "top": "loss"
+}]
+}

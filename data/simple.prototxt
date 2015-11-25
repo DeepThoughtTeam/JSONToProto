@@ -1,0 +1,100 @@
+layer {
+  name: mnist
+  top: data
+  top: label
+  data_param {
+    source: examples/mlp/mnist_train_lmdb
+    batch_size: 64
+    backend: LMDB
+  }
+  include {
+    phase: TRAIN
+  }
+  type: Data
+  transform_param {
+    scale: 0.00390625
+  }
+}
+layer {
+  name: mnist
+  top: data
+  top: label
+  data_param {
+    source: examples/mlp/mnist_test_lmdb
+    batch_size: 100
+    backend: LMDB
+  }
+  include {
+    phase: TEST
+  }
+  type: Data
+  transform_param {
+    scale: 0.00390625
+  }
+}
+layer {
+  name: ip1
+  bottom: data
+  inner_product_param {
+    weight_filler {
+      type: xavier
+    }
+    bias_filler {
+      type: constant
+    }
+    num_output: 500
+  }
+  top: ip1
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: InnerProduct
+}
+layer {
+  top: ip1
+  type: ReLU
+  name: relu1
+  bottom: ip1
+}
+layer {
+  name: ip2
+  bottom: ip1
+  inner_product_param {
+    weight_filler {
+      type: xavier
+    }
+    bias_filler {
+      type: constant
+    }
+    num_output: 10
+  }
+  top: ip2
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: InnerProduct
+}
+layer {
+  top: accuracy
+  include {
+    phase: TEST
+  }
+  type: Accuracy
+  name: accuracy
+  bottom: ip2
+  bottom: label
+}
+layer {
+  top: loss
+  type: SoftmaxWithLoss
+  name: loss
+  bottom: ip2
+  bottom: label
+}
+name: LeNet
