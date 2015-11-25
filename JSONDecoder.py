@@ -1,4 +1,5 @@
 #import simplejson as json
+
 import json
 # This JSON decoder decode JSON format file to
 # caffe configuration format file
@@ -47,6 +48,8 @@ class JSONDecoder:
     tabs = "  " * tab
     res = ""
     for key,value in dictionary.iteritems():
+      if key == "idx":
+        continue
       if isinstance(value, dict):
         res += tabs
         res += key
@@ -72,6 +75,8 @@ class JSONDecoder:
     tabs = "  " * tab
     res = "{\n"
     for key,value in dictionary.iteritems():
+      if key == "idx":
+        continue
       if isinstance(value, dict):
         res += tabs
         res += key

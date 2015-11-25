@@ -3,6 +3,7 @@
    "input":"data",
    "input_shape":{"dim":[10000, 1, 28, 28]},
    "layer":[{
+     "idx":"1",
       "name":"conv1",
       "type":"Convolution",
       "bottom":"data",
