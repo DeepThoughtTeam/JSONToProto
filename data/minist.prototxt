@@ -1,0 +1,168 @@
+layer {
+  name: "mnist"
+  top: "data"
+  top: "label"
+  data_param {
+    source: "examples/mnist/mnist_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+  include {
+    phase: TRAIN
+  }
+  type: "Data"
+  transform_param {
+    scale: 0.00390625
+  }
+}
+layer {
+  name: "mnist"
+  top: "data"
+  top: "label"
+  data_param {
+    source: "examples/mnist/mnist_test_lmdb"
+    batch_size: 100
+    backend: LMDB
+  }
+  include {
+    phase: TEST
+  }
+  type: "Data"
+  transform_param {
+    scale: 0.00390625
+  }
+}
+layer {
+  name: "conv1"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    weight_filler {
+      type: "xavier"
+    }
+    stride: 1
+    bias_filler {
+      type: "constant"
+    }
+    kernel_size: 5
+    num_output: 20
+  }
+  type: "Convolution"
+}
+layer {
+  pooling_param {
+    stride: 2
+    kernel_size: 2
+    pool: MAX
+  }
+  top: "pool1"
+  type: "Pooling"
+  name: "pool1"
+  bottom: "conv1"
+}
+layer {
+  name: "conv2"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    weight_filler {
+      type: "xavier"
+    }
+    stride: 1
+    bias_filler {
+      type: "constant"
+    }
+    kernel_size: 5
+    num_output: 50
+  }
+  type: "Convolution"
+}
+layer {
+  pooling_param {
+    stride: 2
+    kernel_size: 2
+    pool: MAX
+  }
+  top: "pool2"
+  type: "Pooling"
+  name: "pool2"
+  bottom: "conv2"
+}
+layer {
+  name: "ip1"
+  bottom: "pool2"
+  inner_product_param {
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+    num_output: 500
+  }
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: "InnerProduct"
+}
+layer {
+  top: "ip1"
+  type: "ReLU"
+  name: "relu1"
+  bottom: "ip1"
+}
+layer {
+  name: "ip2"
+  bottom: "ip1"
+  inner_product_param {
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+    num_output: 10
+  }
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  type: "InnerProduct"
+}
+layer {
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+  type: "Accuracy"
+  name: "accuracy"
+  bottom: "ip2"
+  bottom: "label"
+}
+layer {
+  top: "loss"
+  type: "SoftmaxWithLoss"
+  name: "loss"
+  bottom: "ip2"
+  bottom: "label"
+}
+name: "LeNet"
