@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 import sys, getopt
 
 # This JSON decoder decode JSON format file to
@@ -37,14 +37,7 @@ class JSONDecoder:
     res = ""
     res += str(key)
     res += ": "
-    if isinstance(value, str):
-      if value.isupper():
-        res += value
-      else:
-        res += "\"" + value +"\""
-    else:
-      res += str(value)
-    res +="\n"
+    res += self.decodeValueToStr(value)
     return res
 
   def decodeValueToStr(self, value):

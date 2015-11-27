@@ -1,6 +1,6 @@
 power: 0.75
 snapshot_prefix: "examples/mnist/lenet"
-max_iter: 100
+max_iter: 3
 display: 100
 base_lr: 0.01
 snapshot: 5000
