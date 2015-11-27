@@ -125,7 +125,7 @@ def main(argv):
   decoder = JSONDecoder()
   net = ""
   try:
-    opts, args = getopt.getopt(argv,"hc:i:o:t:",["command=","ifile=","ofile=","iter="])
+    opts, args = getopt.getopt(argv,"hc:i:o:t:n:",["command=","ifile=","ofile=","iter=", "net="])
   except getopt.GetoptError:
     print 'test.py -i <inputfile> -o <outputfile>'
     sys.exit(2)
@@ -141,6 +141,8 @@ def main(argv):
       command = arg
     elif opt in ("-t", "--iter"):
       iter = int(arg)
+    elif opt in ("-n", "--net"):
+      net = arg
     else:
       sys.exit()
 
