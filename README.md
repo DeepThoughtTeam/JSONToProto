@@ -94,10 +94,16 @@ System setup should be done before users start use. Users don’t need to setup 
 
 ### Achives
 
+[GUI Design](https://github.com/DeepThoughtTeam/D3-Graphic)
+
+[Web Server Deployment](https://github.com/DeepThoughtTeam/core-code-base)
+
+[Tensorflow](https://github.com/DeepThoughtTeam/Documents)
+
+### Others
+
+[2015 Backup](https://github.com/DeepThoughtTeam/deep-throught-2015-backup)
+
 [Demo Day Presentation](https://docs.google.com/presentation/d/1V_JC7z_xxNAV-JFmKlpWs6FCLVP2aCoeuYOM1R0s2Ys/edit#slide=id.geb073114e_0_0) (Dec, 7th, 2015)
-
-[GUI Design](https://github.com/DeepThoughtTeam/D3-Graphic/blob/master/GUI%20Design.md)
-
-[Pipeline](pipeline.png)
 
 
